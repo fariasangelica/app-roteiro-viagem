@@ -315,6 +315,23 @@
 
         </div>
 
+        <!-- BACKUP PORTÁTIL (COMPARTILHAR JSON) -->
+        <footer class="mt-14 pt-6 border-t border-gray-200/70 text-center">
+            <p class="text-xs text-gray-400 mb-4 max-w-md mx-auto leading-relaxed">
+                Seus dados ficam só neste aparelho. Para compartilhar ou transferir um roteiro, exporte o JSON e envie para quem quiser importar.
+            </p>
+            <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-xs">
+                <button onclick="exportItinerary()" class="btn-lively text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1.5 font-medium px-3 py-2 rounded-xl hover:bg-gray-100">
+                    <i class="fa-solid fa-download"></i> Exportar Backup
+                </button>
+                <span class="text-gray-200 hidden sm:inline">|</span>
+                <label class="btn-lively text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1.5 cursor-pointer font-medium px-3 py-2 rounded-xl hover:bg-gray-100">
+                    <i class="fa-solid fa-upload"></i> Importar Backup
+                    <input type="file" id="import-file" accept=".json,application/json" class="hidden" onchange="importItinerary(event)">
+                </label>
+            </div>
+        </footer>
+
     </div>
 
     <!-- MODAL INTEGRADO PARA EDITAR AS FOTOS POLAROID -->
@@ -638,6 +655,88 @@
                     toast.classList.add('hidden');
                 }, 300);
             }, 3000);
+        }
+
+        function exportItinerary() {
+            try {
+                saveItineraryData();
+                saveHeaderData();
+
+                const backup = {
+                    version: 1,
+                    exportedAt: new Date().toISOString(),
+                    roteiro_itinerary: localStorage.getItem('roteiro_itinerary'),
+                    roteiro_expanded_days: localStorage.getItem('roteiro_expanded_days'),
+                    roteiro_polaroids: localStorage.getItem('roteiro_polaroids'),
+                    roteiro_checklist: localStorage.getItem('roteiro_checklist'),
+                    roteiro_budget: localStorage.getItem('roteiro_budget'),
+                    roteiro_header_title: localStorage.getItem('roteiro_header_title'),
+                    roteiro_header_subtitle: localStorage.getItem('roteiro_header_subtitle')
+                };
+
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backup, null, 2));
+                const link = document.createElement('a');
+                link.href = dataUri;
+                link.download = 'meu_roteiro_backup.json';
+                link.click();
+
+                showToast('Backup exportado com sucesso!');
+            } catch (error) {
+                showToast('Erro ao exportar o backup.', 'error');
+            }
+        }
+
+        function backupValueToStorage(rawValue) {
+            if (rawValue == null) return null;
+            return typeof rawValue === 'string' ? rawValue : JSON.stringify(rawValue);
+        }
+
+        function importBackupField(parsedData, fieldNames, storageKey) {
+            for (const name of fieldNames) {
+                if (parsedData[name] != null) {
+                    const value = backupValueToStorage(parsedData[name]);
+                    if (value !== null) safeStorageSet(storageKey, value);
+                    return;
+                }
+            }
+        }
+
+        function importItinerary(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const parsedData = JSON.parse(e.target.result);
+
+                    importBackupField(parsedData, ['roteiro_itinerary', 'itinerary'], 'roteiro_itinerary');
+                    importBackupField(parsedData, ['roteiro_expanded_days', 'expanded'], 'roteiro_expanded_days');
+                    importBackupField(parsedData, ['roteiro_polaroids', 'polaroids'], 'roteiro_polaroids');
+                    importBackupField(parsedData, ['roteiro_checklist', 'checklist'], 'roteiro_checklist');
+                    importBackupField(parsedData, ['roteiro_budget', 'budget'], 'roteiro_budget');
+                    importBackupField(parsedData, ['roteiro_header_title', 'title'], 'roteiro_header_title');
+                    importBackupField(parsedData, ['roteiro_header_subtitle', 'subtitle'], 'roteiro_header_subtitle');
+
+                    itineraryData = loadStorageJSON('roteiro_itinerary', itineraryData);
+                    expandedDays = loadStorageJSON('roteiro_expanded_days', expandedDays);
+                    polaroidData = loadStorageJSON('roteiro_polaroids', polaroidData);
+                    checklistData = loadStorageJSON('roteiro_checklist', checklistData);
+                    budgetData = loadStorageJSON('roteiro_budget', budgetData);
+
+                    loadHeaderData();
+                    renderItinerary();
+                    renderPolaroids();
+                    renderChecklist();
+                    renderBudget();
+
+                    showToast('Roteiro importado com sucesso!');
+                } catch (err) {
+                    showToast('Arquivo JSON inválido ou corrompido.', 'error');
+                }
+            };
+            fileReader.readAsText(file);
+            event.target.value = '';
         }
 
         function saveItineraryData() {
