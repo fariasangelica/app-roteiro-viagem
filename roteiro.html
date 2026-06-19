@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="format-detection" content="telephone=no">
-    <title>Meu Roteiro Chile - Vision Board Pessoal (Editável)</title>
+    <title>Meu Roteiro de Viagem - Planejador Pessoal</title>
     <!-- Tailwind CSS para design moderno e responsivo -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
@@ -57,7 +57,7 @@
 </head>
 <body class="min-h-screen pb-16">
 
-    <!-- BARRA DECORATIVA SUPERIOR COM CORES ANDINAS -->
+    <!-- BARRA DECORATIVA SUPERIOR -->
     <div class="h-2 w-full bg-gradient-to-r from-amber-600 via-emerald-600 to-sky-700"></div>
 
     <!-- WRAPPER DO APLICATIVO -->
@@ -65,9 +65,9 @@
         
         <!-- CABEÇALHO DO DIÁRIO PESSOAL -->
         <header class="bg-[#f5f2eb] rounded-3xl p-8 md:p-12 mb-10 border border-[#e8dfd5] relative overflow-hidden shadow-xs">
-            <!-- Marca d'água decorativa de montanha no fundo -->
+            <!-- Ícone decorativo de viagem no fundo -->
             <div class="absolute right-0 bottom-0 opacity-5 pointer-events-none transform translate-y-12 translate-x-12">
-                <i class="fa-solid fa-mountain text-[120px] sm:text-[200px] md:text-[300px]"></i>
+                <i class="fa-solid fa-earth-americas text-[120px] sm:text-[200px] md:text-[300px]"></i>
             </div>
             
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
@@ -75,12 +75,12 @@
                     <!-- Título e Subtítulo Editáveis com clique direto -->
                     <div class="group relative">
                         <h1 id="header-title" contenteditable="true" onblur="saveHeaderData()" class="text-4xl md:text-6xl font-bold tracking-tight text-[#1c1a19] mb-3 focus:bg-white focus:outline-dashed focus:outline-amber-400 p-1 rounded transition-all">
-                            Nosso Roteiro: Chile 🇨🇱
+                            Meu Roteiro de Viagem ✈️
                         </h1>
                     </div>
                     <div class="group relative">
                         <p id="header-subtitle" contenteditable="true" onblur="saveHeaderData()" class="text-lg text-amber-900/85 font-medium max-w-4xl serif-font italic focus:bg-white focus:outline-dashed focus:outline-amber-400 p-1 rounded transition-all">
-                            "De 03 a 11 de Março: da brisa pacífica de Valparaíso ao silêncio das lagoas andinas em Portillo."
+                            Toque aqui para editar o destino, as datas e a descrição da sua viagem.
                         </p>
                     </div>
                 </div>
@@ -323,145 +323,84 @@
             }
         };
 
-        // Estrutura de dados padrão inicial
+        function migrateLegacyStorage() {
+            const legacyKeys = {
+                chile_itinerary_custom: 'roteiro_itinerary',
+                chile_expanded_days: 'roteiro_expanded_days',
+                chile_polaroids: 'roteiro_polaroids',
+                chile_checklist: 'roteiro_checklist',
+                chile_budget: 'roteiro_budget',
+                chile_header_title: 'roteiro_header_title',
+                chile_header_subtitle: 'roteiro_header_subtitle'
+            };
+            Object.entries(legacyKeys).forEach(([oldKey, newKey]) => {
+                const legacyValue = localStorage.getItem(oldKey);
+                if (legacyValue !== null && localStorage.getItem(newKey) === null) {
+                    safeStorageSet(newKey, legacyValue);
+                }
+            });
+        }
+
+        migrateLegacyStorage();
+
+        // Estrutura de dados padrão inicial (modelo genérico — totalmente editável)
         const defaultItinerary = [
             {
-                id: "day-03",
+                id: "day-1",
+                date: "01",
+                month: "Jan",
+                color: "amber",
+                title: "Dia 1 — Chegada",
+                subtitle: "Check-in, primeiro passeio e adaptação",
+                description: "Descreva aqui o plano do primeiro dia: horário de chegada, hotel, transfer e o que fazer na estreia da viagem.",
+                activities: [
+                    { time: "Manhã", text: "Chegada e check-in no hotel.", completed: false },
+                    { time: "Tarde", text: "Passeio leve para conhecer os arredores.", completed: false },
+                    { time: "💡 Dica", text: "Anote endereços, reservas e contatos importantes.", completed: false }
+                ],
+                notes: ""
+            },
+            {
+                id: "day-2",
+                date: "02",
+                month: "Jan",
+                color: "emerald",
+                title: "Dia 2 — Explorando",
+                subtitle: "Principais pontos turísticos ou atividades",
+                description: "Use este cartão para organizar os passeios, restaurantes e horários do dia. Edite tudo pelo botão de lápis.",
+                activities: [
+                    { time: "Manhã", text: "Atividade ou passeio principal.", completed: false },
+                    { time: "Tarde", text: "Segundo roteiro ou tempo livre.", completed: false }
+                ],
+                notes: ""
+            },
+            {
+                id: "day-3",
                 date: "03",
-                month: "Mar",
-                color: "amber",
-                title: "Chegada a Santiago",
-                subtitle: "Check-in, câmbio e primeiro contato com a gastronomia local",
-                description: "Bem-vindo ao Chile! Hoje o dia é dedicado a se situar. Desembarque, faça seu transfer com calma até o hotel e aproveite a noite para um jantar descontraído.",
-                activities: [
-                    { time: "📍 Onde comer", text: "Bairro Lastarria (ruelas cheias de bistrôs charmosos).", completed: false },
-                    { time: "💡 Dica Prática", text: "Use os caixas oficiais (como Banco Estado) para sacar alguns pesos.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-04",
-                date: "04",
-                month: "Mar",
-                color: "emerald",
-                title: "Coração de Santiago & Pôr do sol sublime",
-                subtitle: "Plaza de Armas, Palácio de La Moneda e mirantes",
-                description: "Dia de explorar a pé o centro histórico de Santiago. Sinta o ritmo da cidade e suba em seus dois morros principais para ter vistas inesquecíveis dos Andes.",
-                activities: [
-                    { time: "Manhã", text: "Caminhada pelo Palácio de La Moneda (troca de guarda se coincidir) e Plaza de Armas.", completed: false },
-                    { time: "Tarde", text: "Subida de bondinho (funicular) ao topo do Cerro San Cristóbal ou Cerro Santa Lucía.", completed: false },
-                    { time: "Fim de Tarde", text: "Sky Costanera para ver o sol se pôr atrás da Cordilheira com vista de 360 graus.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-05",
-                date: "05",
-                month: "Mar",
+                month: "Jan",
                 color: "sky",
-                title: "Cajón del Maipo & Embalse el Yeso",
-                subtitle: "A incrível lagoa azul turquesa aninhada nos Andes",
-                description: "Subida épica rumo ao cânion do Maipo. Paisagens gigantescas de terra vermelha contrastando com rios de degelo e o incrível lago de Embalse el Yeso.",
+                title: "Dia 3 — Despedida",
+                subtitle: "Últimas compras, check-out e retorno",
+                description: "Planeje o encerramento da viagem: check-out, transfer para o aeroporto e tempo de antecedência recomendado.",
                 activities: [
-                    { time: "Atenção", text: "Levar casaco pesado corta-vento (venta muito lá em cima), protetor solar e água.", completed: false },
-                    { time: "Passeio", text: "Caminhar pelas margens do lago azul e curtir o piquenique tradicional.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-06",
-                date: "06",
-                month: "Mar",
-                color: "purple",
-                title: "Valparaíso & Viña del Mar",
-                subtitle: "Bate-volta ao Pacífico: arte de rua e brisa marítima",
-                description: "Viagem em direção à costa chilena. Valparaíso encanta pela sua bagunça charmosa e morros coloridos cheios de história. Viña del Mar oferece praias limpas, jardins impecáveis e ótimos mariscos.",
-                activities: [
-                    { time: "Valparaíso", text: "Subir pelo Ascensor Reina Victoria e passear pelos becos do Cerro Alegre.", completed: false },
-                    { time: "Viña del Mar", text: "Visitar o icônico Relógio de Flores e experimentar uma empanada na beira-mar.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-07",
-                date: "07",
-                month: "Mar",
-                color: "amber",
-                title: "Vale de Casablanca: Rota do Vinho",
-                subtitle: "Degustações e vinhedos icônicos chilenos",
-                description: "Casablanca é famosa mundialmente por seus vinhos brancos (Sauvignon Blanc, Chardonnay) e tintos leves de clima frio (como Pinot Noir). Ideal para relaxar e almoçar com vista infinita para os vales de parreiras.",
-                activities: [
-                    { time: "Visitação", text: "Escolher vinícolas como Casas del Bosque, Emiliana ou Indómita.", completed: false },
-                    { time: "Dica", text: "Reservar os tours guiados com semanas de antecedência online.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-08",
-                date: "08",
-                month: "Mar",
-                color: "emerald",
-                title: "Cultura & Tradicionalismo",
-                subtitle: "Concha y Toro ou Pueblito de Los Dominicos",
-                description: "Se quiser um tour clássico próximo à cidade, a Concha y Toro é belíssima. À tarde, explore o Pueblito de Los Dominicos, um antigo convento de argila transformado em feira de artesãos incríveis, ideal para comprar lembranças exclusivas de Lápis-Lazúli.",
-                activities: [
-                    { time: "Compras", text: "Explorar o artesanato em lápis-lazúli no Pueblito de Los Dominicos.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-09",
-                date: "09",
-                month: "Mar",
-                color: "sky",
-                title: "Alta Montanha: Portillo & Laguna del Inca",
-                subtitle: "A incrível estrada mítica dos Caracoles",
-                description: "Hoje subimos a famosa rodovia com curvas sinuosas que conectam o Chile à Argentina. No alto, você visitará o clássico hotel de esqui de Portillo e contemplará a mágica e silenciosa Laguna del Inca, famosa por suas lendas indígenas e reflexo esmeralda perfeito.",
-                activities: [
-                    { time: "Ponto alto", text: "Fotografar as curvas dos Caracoles e o espelho d'água da Laguna del Inca.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-10",
-                date: "10",
-                month: "Mar",
-                color: "rose",
-                title: "Dia Livre, Compras & Despedida",
-                subtitle: "Passeio livre e jantar memorável",
-                description: "Um dia sem regras. Aproveite para caminhar pelo Barrio Italia (repleto de antiquários e cafeterias moderninhas), visite museus ou arrume suas malas com calma. Finalize com um excelente jantar de despedida.",
-                activities: [
-                    { time: "Barrio Italia", text: "Aproveitar cafeterias independentes e galerias de design.", completed: false },
-                    { time: "Despedida", text: "Reservar um jantar memorável no Giratório ou no Mestizo.", completed: false }
-                ],
-                notes: ""
-            },
-            {
-                id: "day-11",
-                date: "11",
-                month: "Mar",
-                color: "gray",
-                title: "Regresso ao Brasil",
-                subtitle: "Check-out do hotel e retorno",
-                description: "Encerramento de uma jornada inesquecível. Lembre-se de sair com antecedência para o aeroporto para fazer a devolução do carro ou organizar o transfer, as filas de imigração em Santiago podem ser demoradas.",
-                activities: [
-                    { time: "Aeroporto", text: "Chegar com pelo menos 3 horas de antecedência para voos internacionais.", completed: false }
+                    { time: "Manhã", text: "Check-out e últimas atividades.", completed: false },
+                    { time: "Viagem", text: "Deslocamento de volta (aeroporto, rodoviária, etc.).", completed: false }
                 ],
                 notes: ""
             }
         ];
 
         // Carregando dados locais ou definindo os padrões
-        let itineraryData = loadStorageJSON('chile_itinerary_custom', defaultItinerary);
-        let expandedDays = loadStorageJSON('chile_expanded_days', { "day-03": true });
+        let itineraryData = loadStorageJSON('roteiro_itinerary', defaultItinerary);
+        let expandedDays = loadStorageJSON('roteiro_expanded_days', { "day-1": true });
         let editingDays = {};
 
         // Banco de dados de fotos Polaroid (Com links fixos de alta qualidade do Unsplash)
-        let polaroidData = loadStorageJSON('chile_polaroids', [
-            { id: 1, title: "Santiago & Andes", url: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&q=80&w=600" },
-            { id: 2, title: "Cajón del Maipo", url: "https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&q=80&w=600" },
-            { id: 3, title: "Casas del Bosque", url: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&q=80&w=600" },
-            { id: 4, title: "Portillo Mágico", url: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?auto=format&fit=crop&q=80&w=600" }
+        let polaroidData = loadStorageJSON('roteiro_polaroids', [
+            { id: 1, title: "Destino dos sonhos", url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=600" },
+            { id: 2, title: "Inspiração", url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=600" },
+            { id: 3, title: "Paisagem", url: "https://images.unsplash.com/photo-1476514525535-07fb3b4eae5f?auto=format&fit=crop&q=80&w=600" },
+            { id: 4, title: "Momento especial", url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=600" }
         ]);
 
         let activePolaroidId = null;
@@ -565,19 +504,19 @@
         }
 
         function saveItineraryData() {
-            safeStorageSet('chile_itinerary_custom', JSON.stringify(itineraryData));
+            safeStorageSet('roteiro_itinerary', JSON.stringify(itineraryData));
         }
 
         function saveHeaderData() {
             const titleText = document.getElementById('header-title').innerText;
             const subtitleText = document.getElementById('header-subtitle').innerText;
-            safeStorageSet('chile_header_title', titleText);
-            safeStorageSet('chile_header_subtitle', subtitleText);
+            safeStorageSet('roteiro_header_title', titleText);
+            safeStorageSet('roteiro_header_subtitle', subtitleText);
         }
 
         function loadHeaderData() {
-            const savedTitle = localStorage.getItem('chile_header_title');
-            const savedSubtitle = localStorage.getItem('chile_header_subtitle');
+            const savedTitle = localStorage.getItem('roteiro_header_title');
+            const savedSubtitle = localStorage.getItem('roteiro_header_subtitle');
             if (savedTitle) document.getElementById('header-title').innerText = savedTitle;
             if (savedSubtitle) document.getElementById('header-subtitle').innerText = savedSubtitle;
         }
@@ -585,7 +524,7 @@
         // Lógica de sanfona (accordion)
         function toggleDay(dayId) {
             expandedDays[dayId] = !expandedDays[dayId];
-            safeStorageSet('chile_expanded_days', JSON.stringify(expandedDays));
+            safeStorageSet('roteiro_expanded_days', JSON.stringify(expandedDays));
             renderItinerary();
         }
 
@@ -627,8 +566,8 @@
 
         // Adicionar Novo Dia ao final do roteiro
         function addNewDay() {
-            let lastDateNum = 11;
-            let lastMonth = "Mar";
+            let lastDateNum = 1;
+            let lastMonth = "Jan";
             
             if (itineraryData.length > 0) {
                 const lastDay = itineraryData[itineraryData.length - 1];
@@ -663,7 +602,7 @@
             // Expande e entra no modo edição do novo dia
             expandedDays[newId] = true;
             editingDays[newId] = true;
-            safeStorageSet('chile_expanded_days', JSON.stringify(expandedDays));
+            safeStorageSet('roteiro_expanded_days', JSON.stringify(expandedDays));
             
             renderItinerary();
             showToast("Novo dia adicionado com sucesso!", "success");
@@ -961,7 +900,7 @@
                     if (newTitle) item.title = newTitle;
                     if (newUrl) item.url = newUrl;
                     
-                    if (!safeStorageSet('chile_polaroids', JSON.stringify(polaroidData))) {
+                    if (!safeStorageSet('roteiro_polaroids', JSON.stringify(polaroidData))) {
                         showToast('Não foi possível salvar a foto. Tente uma imagem menor.', 'error');
                         return;
                     }
@@ -973,12 +912,12 @@
         }
 
         // LISTA DE EMBARQUE / CHECKLIST
-        let checklistData = loadStorageJSON('chile_checklist', [
-            { id: 1, text: "Casaco Corta-vento (Windbreaker)", checked: false },
-            { id: 2, text: "Protetor solar FPS 50+", checked: false },
-            { id: 3, text: "Seguro Viagem impresso/no celular", checked: false },
-            { id: 4, text: "Tênis confortável para caminhada", checked: false },
-            { id: 5, text: "Adaptador de Tomada tipo L", checked: false }
+        let checklistData = loadStorageJSON('roteiro_checklist', [
+            { id: 1, text: "Documentos e passagem", checked: false },
+            { id: 2, text: "Seguro viagem", checked: false },
+            { id: 3, text: "Carregador e adaptador de tomada", checked: false },
+            { id: 4, text: "Roupas confortáveis", checked: false },
+            { id: 5, text: "Kit de higiene e medicamentos", checked: false }
         ]);
 
         function renderChecklist() {
@@ -1001,7 +940,7 @@
                 `;
                 container.appendChild(itemDiv);
             });
-            safeStorageSet('chile_checklist', JSON.stringify(checklistData));
+            safeStorageSet('roteiro_checklist', JSON.stringify(checklistData));
         }
 
         function toggleChecklistItem(id) {
@@ -1033,11 +972,11 @@
         }
 
         // PLANEJADOR DE CUSTOS E ORÇAMENTO
-        let budgetData = loadStorageJSON('chile_budget', [
-            { id: 1, label: "Passagens Aéreas", val: 1800 },
-            { id: 2, label: "Hospedagem", val: 1200 },
-            { id: 3, label: "Tours (Cajón, Portillo, etc)", val: 800 },
-            { id: 4, label: "Alimentação & Vinhos", val: 1000 }
+        let budgetData = loadStorageJSON('roteiro_budget', [
+            { id: 1, label: "Passagens", val: 0 },
+            { id: 2, label: "Hospedagem", val: 0 },
+            { id: 3, label: "Alimentação", val: 0 },
+            { id: 4, label: "Passeios e extras", val: 0 }
         ]);
 
         function renderBudget() {
@@ -1066,7 +1005,7 @@
             });
             
             document.getElementById('budget-total-val').innerText = "R$ " + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            safeStorageSet('chile_budget', JSON.stringify(budgetData));
+            safeStorageSet('roteiro_budget', JSON.stringify(budgetData));
         }
 
         function addExpenseItem() {
