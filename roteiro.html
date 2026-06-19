@@ -246,7 +246,7 @@
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-camera-retro text-amber-700"></i> Meu Vision Board
                     </h2>
-                    <p class="text-xs text-gray-400 -mt-2 mb-4">Toque em qualquer polaroid para trocar a foto (galeria ou câmera do celular) e o título.</p>
+                    <p class="text-xs text-gray-400 -mt-2 mb-4">Clique em qualquer polaroid para trocar a foto (do celular ou do computador) e o título.</p>
                     
                     <div class="grid grid-cols-2 gap-4" id="polaroids-grid">
                         <!-- Renderizado via JS -->
@@ -350,11 +350,11 @@
                     <img id="modal-polaroid-preview-img" src="" alt="Prévia da foto" class="w-full object-contain bg-gray-100">
                 </div>
                 <label class="flex items-center justify-center gap-2 w-full bg-amber-800 hover:bg-amber-900 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer transition-colors">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
-                    Escolher foto do celular
+                    <i class="fa-solid fa-image"></i>
+                    Importar foto do dispositivo
                     <input type="file" id="modal-polaroid-file" accept="image/*" class="hidden" onchange="handlePolaroidFileSelect(event)">
                 </label>
-                <p class="text-[10px] text-gray-400 mt-1.5 text-center">Abre a galeria ou a câmera do seu aparelho.</p>
+                <p class="text-[10px] text-gray-400 mt-1.5 text-center">No celular: galeria ou câmera. No computador: arquivos do PC.</p>
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ou link da web (opcional):</label>
