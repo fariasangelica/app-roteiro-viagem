@@ -66,11 +66,6 @@
 
         .app-content { position: relative; z-index: 1; }
 
-        .top-bar-animated {
-            background: linear-gradient(90deg, #d97706, #059669, #0369a1, #d97706);
-            background-size: 300% 100%;
-        }
-
         .header-card {
             box-shadow: 0 4px 24px rgba(120, 90, 60, 0.08);
             transition: box-shadow 0.3s ease, transform 0.3s ease;
@@ -129,10 +124,6 @@
             max-height: 12rem;
         }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
@@ -160,7 +151,6 @@
         }
 
         @media (prefers-reduced-motion: no-preference) {
-            .top-bar-animated { animation: gradientShift 10s ease infinite; }
             .app-shell { animation: fadeInUp 0.55s ease-out; }
             .header-card { animation: fadeInUp 0.6s ease-out 0.05s backwards; }
             .section-card { animation: fadeInUp 0.55s ease-out backwards; }
@@ -195,8 +185,7 @@
         <span class="shape shape-3"></span>
     </div>
 
-    <!-- BARRA DECORATIVA SUPERIOR -->
-    <div class="top-bar-animated h-2 w-full relative z-10"></div>
+    </div>
 
     <!-- WRAPPER DO APLICATIVO -->
     <div class="app-content app-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
