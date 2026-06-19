@@ -171,24 +171,6 @@
 
         </div>
 
-        <!-- RODAPÉ COMPACTO COM SISTEMA DE BACKUP DISCRETO -->
-        <footer class="mt-16 text-center text-xs text-gray-400 border-t border-gray-200 pt-6">
-            <p>Seu roteiro pessoal para o Chile.</p>
-            <p class="mt-1">Todas as alterações feitas no diário, checklists e finanças são salvas automaticamente no seu navegador local.</p>
-            
-            <!-- Controles mínimos de Backup Portátil -->
-            <div class="mt-6 flex justify-center items-center gap-4 text-[11px]">
-                <button onclick="exportItinerary()" class="text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1.5 focus:outline-none font-medium">
-                    <i class="fa-solid fa-download text-[10px]"></i> Exportar Backup
-                </button>
-                <span class="text-gray-200">|</span>
-                <label class="text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1.5 cursor-pointer focus:outline-none font-medium">
-                    <i class="fa-solid fa-upload text-[10px]"></i> Importar Backup
-                    <input type="file" id="import-file" class="hidden" onchange="importItinerary(event)">
-                </label>
-            </div>
-        </footer>
-
     </div>
 
     <!-- MODAL INTEGRADO PARA EDITAR AS FOTOS POLAROID -->
@@ -496,74 +478,6 @@
                     toast.classList.add('hidden');
                 }, 300);
             }, 3000);
-        }
-
-        // Exportador de Backups portáveis para o rodapé
-        function exportItinerary() {
-            try {
-                const dataStr = JSON.stringify({
-                    itinerary: localStorage.getItem('chile_itinerary_custom'),
-                    expanded: localStorage.getItem('chile_expanded_days'),
-                    polaroids: localStorage.getItem('chile_polaroids'),
-                    checklist: localStorage.getItem('chile_checklist'),
-                    budget: localStorage.getItem('chile_budget'),
-                    title: localStorage.getItem('chile_header_title'),
-                    subtitle: localStorage.getItem('chile_header_subtitle')
-                });
-                
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                const exportFileDefaultName = 'meu_roteiro_chile_backup.json';
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
-                
-                showToast("Backup baixado com sucesso!");
-            } catch (error) {
-                showToast("Erro ao processar as configurações do backup.", "error");
-            }
-        }
-
-        // Importador de arquivos de Backup
-        function importItinerary(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const fileReader = new FileReader();
-            fileReader.onload = function(e) {
-                try {
-                    const parsedData = JSON.parse(e.target.result);
-                    
-                    if (parsedData.itinerary) safeStorageSet('chile_itinerary_custom', parsedData.itinerary);
-                    if (parsedData.expanded) safeStorageSet('chile_expanded_days', parsedData.expanded);
-                    if (parsedData.polaroids) safeStorageSet('chile_polaroids', parsedData.polaroids);
-                    if (parsedData.checklist) safeStorageSet('chile_checklist', parsedData.checklist);
-                    if (parsedData.budget) safeStorageSet('chile_budget', parsedData.budget);
-                    if (parsedData.title) safeStorageSet('chile_header_title', parsedData.title);
-                    if (parsedData.subtitle) safeStorageSet('chile_header_subtitle', parsedData.subtitle);
-                    
-                    // Atualização instantânea de variáveis em memória
-                    itineraryData = loadStorageJSON('chile_itinerary_custom', itineraryData);
-                    expandedDays = loadStorageJSON('chile_expanded_days', expandedDays);
-                    polaroidData = loadStorageJSON('chile_polaroids', polaroidData);
-                    checklistData = loadStorageJSON('chile_checklist', checklistData);
-                    budgetData = loadStorageJSON('chile_budget', budgetData);
-                    
-                    // Rerenderização total do layout
-                    loadHeaderData();
-                    renderItinerary();
-                    renderPolaroids();
-                    renderChecklist();
-                    renderBudget();
-                    
-                    showToast("Sucesso! Todos os dados de backup foram importados.");
-                } catch (err) {
-                    showToast("Formato de arquivo incorreto ou corrompido.", "error");
-                }
-            };
-            fileReader.readAsText(file);
-            event.target.value = ''; // Reseta input de arquivos
         }
 
         function saveItineraryData() {
